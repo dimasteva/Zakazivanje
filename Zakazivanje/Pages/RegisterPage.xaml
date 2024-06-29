@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Zakazivanje.Pages.RegisterPage"
+             Title="RegisterPage">
+    <VerticalStackLayout>
+        <Label
+            x:Name="labTitle"
+            Margin="0, 50, 0, 0"
+            Text="ZakazivanjeApp"
+            HorizontalOptions="Center"/>
+        
+        <Entry
+            x:Name="entFirstName"
+            HorizontalOptions="Center"
+            WidthRequest="200"
+            Margin="0, 30, 0, 0"
+            Placeholder="Name"
+            />
+        
+        <Entry
+            x:Name="entLastName"
+            HorizontalOptions="Center"
+            WidthRequest="200"
+            Margin="0, 30, 0, 0"
+            Placeholder="Last Name"
+            />
+        
+        <Entry
+            x:Name="entEmail"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="Email"
+            />
+
+        <Entry
+            x:Name="entID"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="ID"
+            />
+
+        <Entry
+            x:Name="entPhoneNumber"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="Phone Number"
+            />
+        
+        <Entry
+            x:Name="entAddress"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="Address"
+            />
+        
+        <Entry
+            x:Name="entPassword"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="Password"
+            />
+        
+        <Entry
+            x:Name="entRepeatPassword"
+            HorizontalOptions="Center"
+            WidthRequest="200"            
+            Margin="0, 30, 0, 0"
+            Placeholder="Repeat Password"
+            />
+        
+        <Button
+            x:Name="btnRegister"
+            HorizontalOptions="Center"
+            WidthRequest="250"            
+            Margin="0, 50, 0, 0"
+            Text="Register"
+            Clicked="btnRegister_Clicked"
+            />
+        
+    </VerticalStackLayout>
+</ContentPage>

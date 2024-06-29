@@ -14,12 +14,10 @@ namespace Zakazivanje.Pages
 
         private void btnLogIn_Clicked(object sender, EventArgs e)
         {
-            // Konekcioni string
-            string connectionString = "Server=sql7.freesqldatabase.com;Database=sql7716092;User ID=sql7716092;Password=PpY2jsqI5h;Port=3306;";
 
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                using (MySqlConnection conn = new MySqlConnection(MainPage.connectionString))
                 {
                     try
                     {

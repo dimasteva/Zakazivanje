@@ -8,16 +8,19 @@
             x:Name="labTitle"
             Margin="0, 50, 0, 0"
             Text="ZakazivanjeApp"
-            HorizontalOptions="Center"/>
+            HorizontalOptions="Center"
+            />
         <Entry
             x:Name="entEmail"
             Margin="0,100,0,0"
             Placeholder="email"
-            WidthRequest="200"/>
+            WidthRequest="200"
+            />
         <Entry
             x:Name="entPassword"
             Placeholder="password"
-            WidthRequest="200"/>
+            WidthRequest="200"
+            />
         <Button
             Margin="0, 50, 0, 0"
             x:Name="btnLogIn"

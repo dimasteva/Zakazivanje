@@ -4,7 +4,7 @@ namespace Zakazivanje
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        public static string connectionString = "Server=sql7.freesqldatabase.com;Database=sql7716092;User ID=sql7716092;Password=PpY2jsqI5h;Port=3306;";
 
         public MainPage()
         {
@@ -18,7 +18,7 @@ namespace Zakazivanje
 
         private void BtnRegister_Clicked(object sender, EventArgs e)
         {
-
+            Navigation.PushAsync(new RegisterPage());
         }
     }
 
