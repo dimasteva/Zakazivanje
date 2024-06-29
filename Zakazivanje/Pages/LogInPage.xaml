@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Zakazivanje.Pages.LogInPage"
+             Title="LogInPage">
+    <VerticalStackLayout>
+        <Label
+            x:Name="labTitle"
+            Margin="0, 50, 0, 0"
+            Text="ZakazivanjeApp"
+            HorizontalOptions="Center"/>
+        <Entry
+            x:Name="entEmail"
+            Margin="0,100,0,0"
+            Placeholder="email"
+            WidthRequest="200"/>
+        <Entry
+            x:Name="entPassword"
+            Placeholder="password"
+            WidthRequest="200"/>
+        <Button
+            Margin="0, 50, 0, 0"
+            x:Name="btnLogIn"
+            Text="Log in"
+            Clicked="btnLogIn_Clicked"
+            WidthRequest="200"
+            />
+    </VerticalStackLayout>
+</ContentPage>
