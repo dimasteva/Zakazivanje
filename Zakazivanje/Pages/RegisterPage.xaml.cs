@@ -1,6 +1,8 @@
 using MySqlConnector;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Zakazivanje.Classes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Zakazivanje.Pages
 {
@@ -19,51 +21,131 @@ namespace Zakazivanje.Pages
             InitializeComponent();
         }
 
-        private async Task<bool> ValidateCredentials()
+        private async Task<bool> ValidateFormat()
         {
-            if (!Regex.IsMatch(email, Credentials.emailPattern))
+            if (string.IsNullOrEmpty(firstName) || !Regex.IsMatch(firstName, Credentials.namePattern))
             {
-                await DisplayAlert("Invalid Credentials", "Enter valid email", "OK");
+                await DisplayAlert("Invalid Credentials", "Enter a valid first name", "OK");
                 return false;
             }
 
-            if (!Regex.IsMatch(password, Credentials.passwordPattern))
+            if (string.IsNullOrEmpty(lastName) || !Regex.IsMatch(lastName, Credentials.namePattern))
             {
-                await DisplayAlert("Invalid Credentials", "Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character.", "OK");
+                await DisplayAlert("Invalid Credentials", "Enter a valid last name", "OK");
                 return false;
             }
 
-            if (!Regex.IsMatch(firstName, Credentials.namePattern))
+            if (string.IsNullOrEmpty(email) || !Regex.IsMatch(email, Credentials.emailPattern))
             {
-                await DisplayAlert("Invalid Credentials", "Enter valid first name", "OK");
+                await DisplayAlert("Invalid Credentials", "Enter a valid email", "OK");
                 return false;
             }
 
-            if (!Regex.IsMatch(lastName, Credentials.namePattern))
-            {
-                await DisplayAlert("Invalid Credentials", "Enter valid last name", "OK");
-                return false;
-            }
-
-            if (!Regex.IsMatch(address, Credentials.addressPattern))
-            {
-                await DisplayAlert("Invalid Credentials", "Enter valid address", "OK");
-                return false;
-            }
-
-            if (!Regex.IsMatch(phoneNumber, Credentials.phonePattern))
-            {
-                await DisplayAlert("Invalid Credentials", "Enter valid phone number (+381xxxxxxxxx)", "OK");
-                return false;
-            }
-
-            if (!Regex.IsMatch(id, Credentials.idPattern))
+            if (string.IsNullOrEmpty(id) || !Regex.IsMatch(id, Credentials.idPattern))
             {
                 await DisplayAlert("Invalid Credentials", "ID must be 13 digits long", "OK");
                 return false;
             }
 
+            if (string.IsNullOrEmpty(phoneNumber) || !Regex.IsMatch(phoneNumber, Credentials.phonePattern))
+            {
+                await DisplayAlert("Invalid Credentials", "Enter a valid phone number (+381xxxxxxxxx)", "OK");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(address) || !Regex.IsMatch(address, Credentials.addressPattern))
+            {
+                await DisplayAlert("Invalid Credentials", "Enter a valid address", "OK");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(password) || !Regex.IsMatch(password, Credentials.passwordPattern))
+            {
+                await DisplayAlert("Invalid Credentials", "Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character.", "OK");
+                return false;
+            }
+
             return true; // All validations passed
+        }
+
+        private async Task<bool> ValidateInfo()
+        {
+            string query = "SELECT email, person_id, phone_number FROM person " +
+                           "WHERE email = @Email OR person_id = @Id OR phone_number = @PhoneNumber";
+
+            using (MySqlConnection connection = new MySqlConnection(MainPage.connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Email", email);
+                    command.Parameters.AddWithValue("@Id", id);
+                    command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+
+                    using (MySqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        bool emailExists = false, idExists = false, phoneNumberExists = false;
+
+                        while (await reader.ReadAsync())
+                        {
+                            if (reader["email"].ToString() == email)
+                            {
+                                emailExists = true;
+                            }
+                            if (reader["person_id"].ToString() == id)
+                            {
+                                idExists = true;
+                            }
+                            if (reader["phone_number"].ToString() == phoneNumber)
+                            {
+                                phoneNumberExists = true;
+                            }
+                        }
+                        if (emailExists)
+                        {
+                            await DisplayAlert("Error", "This email is already associated with an account.", "OK");
+                            return false;
+                        }
+                        if (idExists)
+                        {
+                            await DisplayAlert("Error", "This ID is already associated with an account.", "OK");
+                            return false;
+                        }
+                        if (phoneNumberExists)
+                        {
+                            await DisplayAlert("Error", "This phone number is already associated with an account.", "OK");
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (password != repeatPassword)
+            {
+                await DisplayAlert("Passwords do not match", "Check passwords", "OK");
+                return false;
+            }
+
+            return true;
+        }
+
+
+
+        private async Task<bool> ValidateCredentials()
+        {
+            bool validFormat = await ValidateFormat();
+
+            if (!validFormat)
+                return false;
+
+
+            bool validInfo = await ValidateInfo();
+
+            if (!validInfo)
+                return false;
+
+            return true;
         }
 
         private async void CreateAccount() //you should check for already existing credentials
@@ -117,7 +199,7 @@ namespace Zakazivanje.Pages
             address = entAddress.Text;
             password = entPassword.Text;
             repeatPassword = entRepeatPassword.Text;
-            
+
             bool valid = await ValidateCredentials();
 
             if (!valid)
