@@ -130,8 +130,6 @@ namespace Zakazivanje.Pages
             return true;
         }
 
-
-
         private async Task<bool> ValidateCredentials()
         {
             bool validFormat = await ValidateFormat();
@@ -171,6 +169,12 @@ namespace Zakazivanje.Pages
                     if (result > 0)
                     {
                         await DisplayAlert("Registration Successful", "You registered successfully!", "OK");
+
+                        var app = (Microsoft.Maui.Controls.Application.Current as App);
+                        if (app != null)
+                        {
+                            app.CurrentCustomer.AssignValues(id, firstName, lastName, email, phoneNumber, address, password);
+                        }
                         return true;
                     }
                     else

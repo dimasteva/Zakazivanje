@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using MySqlConnector;
 using Microsoft.Maui.Controls;
 
@@ -6,8 +8,15 @@ namespace Zakazivanje.Pages
 {
     public partial class LogInPage : ContentPage
     {
+        string firstName = string.Empty;
+        string lastName = string.Empty;
         string email = string.Empty;
-        string secretKey = String.Empty;
+        string id = string.Empty;
+        string phoneNumber = string.Empty;
+        string address = string.Empty;
+        string password = string.Empty;
+        string repeatPassword = string.Empty;
+
         public LogInPage()
         {
             InitializeComponent();
@@ -22,33 +31,43 @@ namespace Zakazivanje.Pages
                     try
                     {
                         await conn.OpenAsync();
-                       
-                        string query = "SELECT COUNT(*) AS count_persons " +
+
+                        string query = "SELECT person_id, first_name, last_name, email, phone_number, street_address, secret_key " +
                                        "FROM person " +
                                        "WHERE email = @Email " +
-                                       "AND secret_key = @SecretKey";
+                                       "AND secret_key = @Password";
                         MySqlCommand cmd = new MySqlCommand(query, conn);
                         cmd.Parameters.AddWithValue("@Email", email);
-                        cmd.Parameters.AddWithValue("@SecretKey", secretKey);
+                        cmd.Parameters.AddWithValue("@Password", password);
 
-                        object result = await cmd.ExecuteScalarAsync();
-
-                        if (result != null && result != DBNull.Value)
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            int countPersons = Convert.ToInt32(result);
-                            if (countPersons > 0)
+                            if (reader.HasRows)
                             {
+                                await reader.ReadAsync();
+
+                                id = reader["person_id"].ToString();
+                                firstName = reader["first_name"].ToString();
+                                lastName = reader["last_name"].ToString();
+                                email = reader["email"].ToString();
+                                phoneNumber = reader["phone_number"].ToString();
+                                address = reader["street_address"].ToString();
+                                password = reader["secret_key"].ToString();
+
+                                var app = (Microsoft.Maui.Controls.Application.Current as App);
+                                if (app != null)
+                                {
+                                    app.CurrentCustomer.AssignValues(id, firstName, lastName, email, phoneNumber, address, password);
+                                }
+
                                 await DisplayAlert("Login Successful", "You have logged in successfully", "OK");
+                                return true;
                             }
                             else
                             {
                                 await DisplayAlert("Invalid Credentials", "You entered either wrong email or wrong password", "OK");
                                 return false;
                             }
-                        }
-                        else
-                        {
-                            labTitle.Text = "Query returned null or empty result.";
                         }
                     }
                     catch (MySqlException ex)
@@ -78,7 +97,7 @@ namespace Zakazivanje.Pages
                 labTitle.Text = $"General Error: {ex.Message}";
                 Console.WriteLine($"General Error: {ex.Message}");
             }
-            return true;
+            return false;
         }
 
         private void RedirectToHomePage()
@@ -95,13 +114,14 @@ namespace Zakazivanje.Pages
                 DisplayAlert("Navigation Error", "Navigation service is not available.", "OK");
             }
         }
+
         private async void btnLogIn_Clicked(object sender, EventArgs e)
         {
             email = entEmail.Text;
-            secretKey = entPassword.Text;
+            password = entPassword.Text;
 
             bool isLogged = await LogIn();
-            
+
             if (isLogged)
             {
                 RedirectToHomePage();
