@@ -148,7 +148,7 @@ namespace Zakazivanje.Pages
             return true;
         }
 
-        private async void CreateAccount() //you should check for already existing credentials
+        private async Task<bool> CreateAccount()
         {
             string query = "INSERT INTO person " +
                            "VALUES (@id, @firstName, @lastName, @address, @email, @phoneNumber, @password);";
@@ -170,24 +170,38 @@ namespace Zakazivanje.Pages
                     int result = await command.ExecuteNonQueryAsync();
                     if (result > 0)
                     {
-                        await DisplayAlert("Registration Succesfull", "You registered succesfully!", "OK");
+                        await DisplayAlert("Registration Successful", "You registered successfully!", "OK");
+                        return true;
                     }
                     else
                     {
-                        //TODO
+                        await DisplayAlert("Registration Unsuccessful", "Try again later", "OK");
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlert("Error occured", ex.Message, "OK");
+                    await DisplayAlert("Error Occurred", ex.Message, "OK");
+                    return false;
                 }
             }
         }
 
         private void RedirectToHomePage()
         {
-            Navigation.PushAsync(new HomePage());
+            if (Navigation != null)
+            {
+                // Clear the navigation stack and set HomePage as the root
+                Navigation.InsertPageBefore(new HomePage(), Navigation.NavigationStack.First());
+                Navigation.PopToRootAsync();
+            }
+            else
+            {
+                // Handle the case where Navigation is null
+                DisplayAlert("Navigation Error", "Navigation service is not available.", "OK");
+            }
         }
+
 
         private async void btnRegister_Clicked(object sender, EventArgs e)
         {
@@ -205,9 +219,12 @@ namespace Zakazivanje.Pages
             if (!valid)
                 return;
 
-            CreateAccount();
+            bool accountCreated = await CreateAccount();
 
-            RedirectToHomePage();
+            if (accountCreated)
+            {
+                RedirectToHomePage();
+            }
         }
     }
 }

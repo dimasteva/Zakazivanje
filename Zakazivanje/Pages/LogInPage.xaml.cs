@@ -81,9 +81,19 @@ namespace Zakazivanje.Pages
             return true;
         }
 
-        private void LogIntoAccount()
+        private void RedirectToHomePage()
         {
-            Navigation.PushAsync(new HomePage());
+            if (Navigation != null)
+            {
+                // Clear the navigation stack and set HomePage as the root
+                Navigation.InsertPageBefore(new HomePage(), Navigation.NavigationStack.First());
+                Navigation.PopToRootAsync();
+            }
+            else
+            {
+                // Handle the case where Navigation is null
+                DisplayAlert("Navigation Error", "Navigation service is not available.", "OK");
+            }
         }
         private async void btnLogIn_Clicked(object sender, EventArgs e)
         {
@@ -94,7 +104,7 @@ namespace Zakazivanje.Pages
             
             if (isLogged)
             {
-                LogIntoAccount();
+                RedirectToHomePage();
             }
         }
     }
