@@ -107,6 +107,7 @@ namespace Zakazivanje.Pages
                 // Clear the navigation stack and set HomePage as the root
                 Navigation.InsertPageBefore(new HomePage(), Navigation.NavigationStack.First());
                 Navigation.PopToRootAsync();
+                Application.Current.MainPage = new HomeShell();
             }
             else
             {
