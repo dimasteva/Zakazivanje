@@ -4,7 +4,7 @@ namespace Zakazivanje
 {
     public partial class MainPage : ContentPage
     {
-        public static string connectionString = "Had_To_Change_This";
+        public static string connectionString = "Server=sql7.freesqldatabase.com;Database=sql7716092;User ID=sql7716092;Password=PpY2jsqI5h;Port=3306;";
 
         public MainPage()
         {
